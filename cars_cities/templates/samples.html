@@ -1,0 +1,45 @@
+<html>
+<head>
+
+{% if polygon %}
+<title>{{ polygon.name }}</title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+
+<script>
+$(document).ready(function() {
+	var map = L.map('samples').setView({{ polygon.center }}, 12);
+	
+	L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
+	    attribution: '',
+	    maxZoom: 18
+	}).addTo(map);
+	
+	L.polygon({{ polygon.data }}).addTo(map);
+	
+	{% if city.boundary %}
+	L.polygon({{ city.boundary }}, {color: '#F30'}).addTo(map);
+	{% endif %}
+});
+</script>
+{% endif %}
+
+</head>
+
+<body>
+{% if polygon %}
+<p><h3>Sampling Convex Hull for {{ city.name }}, {{ city.state }}. Sampling Area: {{ polygon.area }} square miles. City area: {{ city.area }} square miles</h3></p>
+
+<p>Blue polygon is the samples, Red polygon is city boundary.  Note that sometimes the inside of the city boundary may be messed up
+ because of holes and simplification of the polygon rendering process. The general outline should still be correct. Also the city 
+ boundary is not always available for every city.</p>
+<hr />
+<div id="samples" style="width:100%; height:100%;"></div>
+{% else %}
+<h1>Oops! This city is not found!</h1>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,438 @@
+	{% load staticfiles %}
+<html>
+
+<head>
+<!-- <link rel="stylesheet" href="/car_cities{% static 'css/leaflet.css' %}" />-->
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<!--http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css-->
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<!--<script src="/car_cities{% static 'js/leaflet.js'%}"></script>-->
+ <script src="/car_cities{% static 'js/TileLayer.GeoJSON.js'%}"></script>
+<style>
+#map { height: 100%; }
+.legend {
+    line-height: 18px;
+    color: #555;
+    margin-bottom: 100px !important;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.info {
+    padding: 6px 8px;
+    font: 20px/22px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+.leaflet-container {
+    background-color:rgba(255,0,0,0.0);
+}
+</style>
+
+<script>
+$(document).ready(function() {
+	
+	
+	var cm1 = new Array(65);
+	var cm2 = new Array(65);
+	var cm3 = new Array(65);
+	var newcm1 = new Array(65);
+	var newcm2 = new Array(65);
+	var newcm3 = new Array(65);
+	initialColor();
+	var min = 1000;
+	var max = 150000;
+	
+	function newinitialColor() {
+	    for (var i = 1; i <= 64; i++) {
+	    	if (i <= 32) {
+	    		newcm1[i] = 192 - Math.round(((i - 1) / 31) * 87); // 192
+	            newcm2[i] = 228 - Math.round(((i - 1) / 31) * 38); // 228
+	            newcm3[i] = 182 - Math.round(((i - 1) / 31) * 83);  // 182
+	    	}
+
+	        // else if (i <= 84) {
+	        //     newcm1[i] = 1 * 255;  // 105
+	        //     newcm2[i] = Math.round((1 - (i - 42) * 1 / 42) * 255); // 190
+	        //     newcm3[i] = 0; //99
+	        // }
+	        else {
+	            newcm1[i] = 105 - Math.round(((i - 33) / 31) * 59); //46
+	            newcm2[i] = 190 - Math.round(((i - 33) / 31) * 86); //104
+	            newcm3[i] = 99 - Math.round(((i - 33) / 31) * 33); //66
+	        }
+	    }
+	}
+
+	function initialColor() {
+	    for (var i = 1; i <= 64; i++) {
+
+
+	        if (i <= 42) {
+	            cm1[i] = 1 * 255;
+	            cm2[i] = Math.round((1 - (i - 1) * 1 / 41) * 255);
+	            cm3[i] = 0;
+	        }
+	        else {
+	            cm1[i] = Math.round((1 - (i - 42) * 0.5 / 22) * 255);
+	            cm2[i] = 0;
+	            cm3[i] = 0;
+	        }
+	    }
+	}
+
+	function getColorbyValue(value, min, max) {
+		value = (value - min)/(max - min);
+		if (value < 0){
+			value = 0;
+		}
+		if (value > 1){
+			value = 1;
+		}
+		// if (value < 0.3333){
+		// 	value = 0.0;
+		// }
+		// if (value >= 0.3333 && value < 0.6666) {
+
+		// 	value = 0.5;
+		// }
+		// if (value >= 0.6666){
+		// 	value = 1;
+		// }
+	    var thisColor = new Array(4);
+	    value = Math.round(value * 63) + 1;
+	    // value = 65 - value;
+	    thisColor[1] = cm1[value];
+	    thisColor[2] = cm2[value];
+	    thisColor[3] = cm3[value];
+
+	    return rgbToHex(thisColor[1], thisColor[2], thisColor[3]);
+	}
+	
+
+	function getStateColorbyValue(value, min, max) {
+		newinitialColor()
+		value = (value - min)/(max - min);
+		if (value < 0){
+			value = 0;
+		}
+		if (value > 1){
+			value = 1;
+		}
+
+	    var thisColor = new Array(4);
+	    value = Math.round(value * 63) + 1;
+	    value = 65 - value;
+	    thisColor[1] = newcm1[value];
+	    thisColor[2] = newcm2[value];
+	    thisColor[3] = newcm3[value];
+
+	    return rgbToHex(thisColor[1], thisColor[2], thisColor[3]);
+	}
+
+	function getBGColorbyValue(value, min, max) {
+		if (value == 0){
+			return "#dddddd"
+		}
+		if (value == 4){
+			return "#0354A5";
+		}
+		if (value == 3){
+			return "#037AC3";
+		}
+		if (value == 2){
+        	return "#03ADEF";
+    	}
+    	if (value == 1){
+        	return "#70D0F6";
+    	}
+	}
+	
+
+	function componentToHex(c) {
+		c = Math.round(c);
+		if (c > 255) c = 255;
+		if (c < 0) c = 0;
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+	
+	function rgbToHex(r, g, b) {
+	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
+	
+	var map = L.map('map').setView([39.7326,-98.9196], 5);
+	//L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
+	//    attribution: '',
+	//    maxZoom: 18
+	//}).addTo(map);
+	
+	// 1
+	// L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+	// 	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+	// 	maxZoom: 18
+	// }).addTo(map);
+
+    // 2
+	// var Acetate_basemap = L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-base/{z}/{x}/{y}.png', {
+	// 	attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
+	// 	subdomains: '0123',
+	// 	maxZoom: 18
+	// }).addTo(map);
+
+	// 3
+	// var CartoDB_PositronNoLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+	// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	// 	subdomains: 'abcd',
+	// 	minZoom: 0,
+	// 	maxZoom: 18
+	// }).addTo(map);
+
+	// 4
+
+	// var CartoDB_DarkMatterNoLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
+	// attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	// subdomains: 'abcd',
+	// minZoom: 0,
+	// maxZoom: 18
+	// }).addTo(map);
+
+	//5
+	// var BasemapAT_basemap = L.tileLayer('http://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.{format}', {
+	// attribution: 'Datenquelle: <a href="www.basemap.at">basemap.at</a>',
+	// subdomains: ["", "1", "2", "3", "4"],
+	// bounds: [[46.35877, 8.782379], [49.037872, 17.189532]],
+	// format: 'jpeg'
+	// }).addTo(map);
+	// var OpenMapSurfer_AdminBounds = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/adminb/x={x}&y={y}&z={z}', {
+	// 	minZoom: 0,
+	// 	maxZoom: 19,
+	// 	attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	// }).addTo(map);
+
+
+	//6
+	// var BasemapAT_basemap = L.tileLayer('http://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.{format}', {
+	// attribution: 'Datenquelle: <a href="www.basemap.at">basemap.at</a>',
+	// subdomains: ["", "1", "2", "3", "4"],
+	// bounds: [[46.35877, 8.782379], [49.037872, 17.189532]],
+	// format: 'jpeg'
+	// }).addTo(map);
+	
+	// var map = new L.Map('map'),
+ //        cloudmadeUrl = 'http://{s}.tile.cloudmade.com/1a1b06b230af4efdbb989ea99e9841af/997/256/{z}/{x}/{y}.png',
+ //        cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade';
+    
+ //    map.setView(new L.LatLng(38.617, -100.261), 4);
+
+ //    var baseLayer = new L.TileLayer(cloudmadeUrl, { attribution: cloudmadeAttribution});
+ //    map.addLayer(baseLayer);
+
+
+    //L.TileLayer.GeoJSON( <String> urlTemplate, <GeoJSONTileLayer options> options?, <GeoJSON options> geojsonOptions? )
+    {% if field == 'state_data' or field == 'state_gt'%}
+    data = [
+	{% for state_name, d in state.iteritems %}
+    	[{{ d.polygon }}, {{ d.demog }}],
+	{% endfor %}
+	];
+    {% else %}
+	data = [
+	{% for name, data in cities.iteritems %}
+    	["{{ data.name }}", {{ data.latitude }}, {{ data.longitude }}, {{ data.value }}],
+	{% endfor %}
+	];
+	{% endif %}
+	
+	{% if field == 'state_data' or field == 'state_gt'%}
+	var max = data.reduce(function(a, b) {
+		return Math.max(a, b[1]);
+	}, 0);
+	var min = data.reduce(function(a, b) {
+		return Math.min(a, b[1]);
+	}, 1000000);
+	{% else %}
+	var max = data.reduce(function(a, b) {
+		return Math.max(a, b[3]);
+	}, 0);
+	var min = data.reduce(function(a, b) {
+		return Math.min(a, b[3]);
+	}, 1000000);
+	{% endif %}
+
+	{% if field == 'green_gt' %}
+		//var max = 2;
+		//var min = 1.3;
+		//console.log('haha')
+	{% endif%}
+	{% if field == 'state_gt' %}
+		// var max = 40;
+		//var min = 14;
+		//console.log('haha')
+	{% endif%}
+	{% if field == 'actual' %}
+		//var max = 2;
+		var min = 20000;
+		//console.log('haha')
+	{% endif%}
+	var delta = max - min;
+	console.log('Max is ' + max);
+	console.log('Min is ' + min);
+	{% if field == 'state_gt' or field == 'state_data'%}
+	$.each(data, function(index, value) {
+		L.polygon(value[0], {
+			fillColor: getStateColorbyValue(value[1], min, max), 
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	{% else %}
+	data2 = [
+	{% for state_name, d in state.iteritems %}
+    	[{{ d.polygon }}, {{ d.demog }}],
+	{% endfor %}
+	];
+
+	$.each(data2, function(index, value) {
+		L.polygon(value[0], {
+			fillColor: getBGColorbyValue(value[1], min, max), 
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	$.each(data, function(index, value) {
+		a = L.circle([value[1], value[2]], 40000, {
+			fillColor: getColorbyValue(value[3], min, max), 
+			fillOpacity: 1,
+			stroke: false,
+		}).bindPopup(value[0] + ' (' + value[3] + ')');
+		
+		a.addTo(map);
+	});
+	
+
+	{% endif%}
+	
+	function roundToTwo(num) {    
+	    return +(Math.round(num * 100) / 100);
+	}
+	
+
+
+	{% if field == 'state_data' or field == 'state_gt'%}
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
+	        labels = [];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	var curr = grades[i];
+	    	var next = grades[i + 1];
+			if (max < 2) {
+	    		curr *= 100;
+	    		curr = roundToTwo(curr) + '%';
+	    		next *= 100;
+	    		next = roundToTwo(next) + '%';
+	    	}
+	    	else {
+	    		curr = Math.round(curr);
+	    		next = Math.round(next);
+	    	}
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getStateColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        curr + (next ? '&ndash;' + next + '<br />' : '+');
+	    }
+	    return div;
+	};
+	legend.addTo(map);
+
+	{% else %}
+
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
+	        labels = [];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	var curr = grades[i];
+	    	var next = grades[i + 1];
+			if (max < 2) {
+	    		curr *= 100;
+	    		curr = roundToTwo(curr) + '%';
+	    		next *= 100;
+	    		next = roundToTwo(next) + '%';
+	    	}
+	    	else {
+	    		curr = Math.round(curr);
+	    		next = Math.round(next);
+	    	}
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        curr + (next ? '&ndash;' + next + '<br />' : '+');
+	    }
+	    return div;
+	};
+	legend.addTo(map);
+
+	{% endif%}
+
+
+
+
+	var style = {
+       // "clickable": true,
+      //  "color": "#000000",
+        "fillColor": "#000000",
+        "weight": 0,
+       // "opacity": 0.8,
+        "fillOpacity": 0.95
+    };
+    var hoverStyle = {
+        "fillOpacity": 0.5
+    };
+
+    var geojsonURL = 'http://polymaps.appspot.com/state/{z}/{x}/{y}.json';
+    var geojsonTileLayer = new L.TileLayer.GeoJSON(geojsonURL, {
+            clipTiles: true,
+            unique: function (feature) {
+                return feature.id; 
+            }
+        }, {
+            style: style,
+            z_index: -1
+        }
+    );
+    geojsonTileLayer.on('load', function() {
+	  //some behavior
+
+	});
+	//geojsonTileLayer= geojsonTileLayer.bringToBack();
+   // L.TileLayer
+    //geojsonTileLayer.setZIndex(0)
+    // {% if field != 'state_data' and field != 'state_gt'%}
+    // map.addLayer(geojsonTileLayer);
+    // {% endif %}
+});
+</script>
+</head>
+
+<body>
+<div id="map"></div>
+</body>
+</html>

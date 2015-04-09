@@ -1,0 +1,130 @@
+<html>
+<head>
+
+{% if polygon %}
+<title>{{ polygon.name }} GI Hotspots</title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+
+<script>
+$(document).ready(function() {
+	var highscale = 150.0;
+	var lowscale = 150.0;
+	var base = [80, 80, 80];
+	var zThreshold = 0.9;
+	var cm1 = new Array(65);
+	var cm2 = new Array(65);
+	var cm3 = new Array(65);
+	initialColor()
+
+	function initialColor() {
+	    for (var i = 1; i <= 64; i++) {
+	        if (i <= 42) {
+	            cm1[i] = 1 * 255;
+	            cm2[i] = Math.round((1 - (i - 1) * 1 / 41) * 255);
+	            cm3[i] = 0;
+	        }
+	        else {
+	            cm1[i] = Math.round((1 - (i - 42) * 0.5 / 22) * 255);
+	            cm2[i] = 0;
+	            cm3[i] = 0;
+	        }
+	    }
+	}
+
+
+	function getColorbyValue(value) {
+	    var thisColor = new Array(4);
+	    value = Math.round(value * 63) + 1;
+	    thisColor[1] = cm1[value];
+	    thisColor[2] = cm2[value];
+	    thisColor[3] = cm3[value];
+
+	    return rgbToHex(thisColor[1], thisColor[2], thisColor[3]);
+	}
+	
+	/*function zScoreToColor(z) {
+		var r = base[0], g = base[1], b = base[2];
+		if (z > zThreshold) {
+			r = Math.min(r + Math.round(z * highscale), 255);
+		}
+		else if (z < -zThreshold) {
+			b = Math.min(b + Math.round(-z * lowscale), 255);
+		}
+		else {
+			r = 200;
+			g = 200;
+		}
+		var hex = rgbToHex(r, g, b);
+		//console.log(hex);
+		return hex;
+	}*/
+	
+	function componentToHex(c) {
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+
+	function rgbToHex(r, g, b) {
+	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
+	
+	var map = L.map('map').setView({{ polygon.center }}, 12);
+	
+	L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
+	    attribution: '',
+	    maxZoom: 18
+	}).addTo(map);
+	
+	var data = [
+	{% for d in data.shapeRecords %}
+	[{{ d.shape.points.0.1 }}, {{ d.shape.points.0.0 }}, {{ d.record.1 }}, {{ d.record.4 }}],
+	{% endfor %}
+	].filter(function(e) {return e[2] > 0;});
+	
+	function valueToSign(a) {
+		if (a == 3) 
+			return '#009900'
+		else if (a == 2)
+			return '#00FF00'
+		else if (a == 1)
+			return '#66FF66'
+		else if (a == 0)
+			return '#FFFFCC'
+		else if (a == -1)
+			return '#FF6666'
+		else if (a == -2)
+			return '#FF0000'
+		else if (a == -3)
+			return '#990000'
+		else
+			return '#000000'
+	}
+	
+	$.each(data, function(index, value) {
+		L.circle([value[0], value[1]], 50.0, {fillColor: valueToSign (value[3]), stroke:false, fillOpacity:1}).addTo(map);
+	});
+});
+</script>
+{% endif %}
+
+</head>
+<body>
+{% if error %}
+<h1>Oops! {{ error }}</h1>
+{% else %}
+<div id="map" style="width:100%; height:100%;"></div>
+{% endif %}
+</body>
+</html>
+
+<!--
+
+{% for d in zipcodes.shapeRecords %}{% if d.record.2 == 'Boston' %}
+	L.polygon([
+		{% for p in d.shape.points%}[{{p.1}}, {{p.0}}],{% endfor %}
+	], {opacity: 0.5, fillOpacity: 0.1, weight:1}).addTo(map);
+	{% endif %}{% endfor %} -->

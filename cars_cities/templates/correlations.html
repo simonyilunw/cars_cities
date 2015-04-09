@@ -1,0 +1,152 @@
+{% load staticfiles %}
+<html>
+<head>
+
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+<style>
+.plot {
+	border: 1px solid;
+	width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Massachusetts Zipcode Correlations</h2>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Average mpg_city.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Average mpg_highway.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Average Price.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Number of Cars.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of electric.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of england.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of foreign.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of germany.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of hybird.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of italy.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of japan.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of south korea.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of sweden.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/Percentage of usa.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.convertible.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.coupe.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.crew cab.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.extended cab.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.hatchback.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.minivan.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.regular cab.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.sedan.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.suv.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.van.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/submodel.wagon.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/years.1990-1994.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/years.1995-1999.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/years.2000-2004.png' %}" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/years.2005-2009.png' %}" />
+		</div>
+		<div class="col-md-6">
+			<img class="plot" src="/car_cities{% static 'img/plots/years.2010-.png' %}" />
+		</div>
+	</div>
+</div>
+
+
+
+</body>
+</html>
