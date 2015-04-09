@@ -1,0 +1,227 @@
+<html>
+
+<head>
+<title>Cars and Cities</title>
+
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/css/theme.blue.css">
+<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.widgets.min.js"></script>
+
+<script>
+$(document).ready(function() {
+	$('#main_table').tablesorter({theme: 'blue', sortList: [[0,0]], widgets: ['zebra', 'stickyHeaders']});
+	$('#models_table').tablesorter({theme: 'blue', sortList: [[0,0]], widgets: ['zebra', 'stickyHeaders']});
+});
+</script>
+</head>
+
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Cars and Cities Project</h1>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-12">
+			<a target="_blank" href="{% url 'stats' %}"><p>City Samples Chart</p></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<a target="_blank" href="{% url 'correlations' %}"><p>Massachusetts Zipcode Correlations</p></a>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<p><h3>City Level Aggregates</h3></p>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<tr>
+					<td>Total Samples</td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=total_samples">Total</a></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Car price</td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=car_price_avg">Average</a></td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=std_price">Standard Deviation</a></td>
+				</tr>
+				<tr>
+					<td>MPG</td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=car_mpg_highway_avg">Average</a></td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=std_mpg_highway">Standard Deviation</a></td>
+				</tr>
+				<tr>
+					<td>GPM</td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=avg_gpm_highway">Average</a></td>
+					<td>Standard Deviation</td>
+				</tr>
+				<tr>
+					<td>Foreign/Domestic Cars</td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=car_foreign_ratio">Foreign Percent</a></td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=car_domestic_ratio">Domestic Percent</a></td>
+				</tr>
+				<tr>
+					<td>Hybrid</td>
+					<td><a target="_blank" href="{% url 'aggregate' %}?field=car_hybrid_ratio">Hybrid Percent</a></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<p><h3>Car Country Percentage Maps</h3></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			{% for country in countries %}<a target="_blank" href="{% url 'aggregate' %}?country={{country}}">{{ country|title }}</a>, {% endfor %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<p><h3>Car Make Percentage Maps</h3></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			{% for make in makes %}<a target="_blank" href="{% url 'aggregate' %}?make={{make}}">{{ make|title }}</a>, {% endfor %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<p><h3>Car Model Percentage Maps</h3></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="models_table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>Make</th>
+					<th>Models</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for make, models in models.iteritems %}
+				<tr>
+					<td>
+					{{ make | title }}
+					</td>
+					<td>
+					{% for model in models %}
+					<a target="_blank" href="{% url 'aggregate' %}?model={{make}}:%20{{model}}">{{ model|title }}, </a>
+					{% endfor %}
+					</td>
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<p><h3>Heatmap and Clustering</h3></p>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-12">
+			<p><a target="_blank" href="{% url 'hotspots' cityid=175 %}?special=175_mercedes">New York Mercedes Clusters</a></p>
+			<p><a target="_blank" href="{% url 'hotspots' cityid=175 %}?special=175_nissan">New York Nissan Clusters</a></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<p>Hotspots and heatmaps may take some time to load. Multi-clicking the links does not make it load faster.</p>
+			<table id="main_table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>City ID</th>
+					<th>City name</th>
+					<th>State</th>
+					<th>Moran I</th>
+					<th>Score Heatmap (Sparse)</th>
+					<th>Score Heatmap (Interp)</th>
+					<th>MPG Heatmap</th>
+					<th>MPG Heatmap</th>
+					<th>Getis-Ord Cluster</th>
+					<th>Car Price Heatmap</th>
+					<th>Car Price Zipcode Heatmap</th>
+					<th>Income Zipcode Heatmap</th>
+					<th>Actual Income</th>
+					<th>Predicted Income </th>
+					<th>Actual Race</th>
+					<th>Predicted Race</th>
+					<th>Actual Education</th>
+					<th>Predicted Education </th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for city in cities %}
+				<tr>
+					<td>{{ city.cityid }}</td>
+					<td>{{ city.name }}</td>
+					<td>{{ city.state }}</td>
+					<td>{{ city.moran_index }}</td>
+					<td>{% if city.latlng_data_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=car_density">Heatmap</a>{% endif %}</td>
+					<td>{% if city.latlng_data_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=score">Heatmap</a>{% endif %}</td>
+					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=mpg">
+					<div lang="latex">
+					\sum\left(\frac{p}{MPG}\right)
+					</div>
+					</a></td>
+					<td>{% if city.latlng_data_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=mpg2">
+					<div lang="latex">
+					\frac{\sum p}{\sum (p*MPG)}
+					</div>
+					</a>{% endif %}</td>
+					<td>{% if city.hotspots_available %}<a target="_blank" href="{% url 'hotspots' cityid=city.cityid %}">Car Price GI* Cluster</a>{% endif %}</td>
+					<td>{% if city.hotspots_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}">Car Price Heatmap</a>{% endif %}</td>
+					<td>{% if city.zipcode_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=zipcode_price_avg">Car Price Zipcode Heatmap</a>{% endif %}</td>
+					<td>{% if city.zipcode_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=zipcode_income_avg">Income Zipcode Heatmap</a>{% endif %}</td>
+					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=3">Income</a></td>
+					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=3">Income</a></td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=16">White</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=17">Black</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=18">Asian</a>
+					</td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=16">White</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=17">Black</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=18">Asian</a>
+					</td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=20">Highschool</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=22">Bachelor</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=23">Gradschool</a>
+					</td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=20">Highschool</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=22">Bachelor</a>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=23">Gradschool</a>
+					</td>
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+</html>

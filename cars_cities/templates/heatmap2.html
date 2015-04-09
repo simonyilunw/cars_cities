@@ -1,0 +1,98 @@
+{% load staticfiles %}
+<html>
+<head>
+
+{% if polygon %}
+<title>{{ polygon.name }}</title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/car_cities{% static 'js/heatmap.min.js' %}"></script>
+<script src="/car_cities{% static 'js/heatmap-leaflet.js' %}"></script>
+
+
+<script>
+$(document).ready(function() {
+	var radius = 0.001;
+	var scaleFactor = 1.0;
+	var maxScaleFactor = 10.0;
+	var cfg = {
+	  "radius": radius,
+	  "maxOpacity": .6, 
+	  "scaleRadius": true, 
+	  "useLocalExtrema": false,
+	  "maxOpacity": 0.9,
+	  "minOpacity": 0.5,
+	  "latField": 'lat',
+	  "lngField": 'lng',
+	  "valueField": 'value'
+	};
+	var heatmapLayer = new HeatmapOverlay(cfg);
+	var mapLayer = L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
+	    attribution: '',
+	    maxZoom: 18
+	});
+	
+	var map = L.map('map', {
+		center: {{ polygon.center }},
+		zoom: 12,
+		layers: [mapLayer, heatmapLayer]
+	});
+	
+	var data = {
+		data: [
+	{% if field == 'income' %}
+			{% for d in data.shapeRecords %}{% if d.record.1 and d.record.1 != 'None'%}
+			{lat:{{ d.shape.points.0.1 }},lng:{{ d.shape.points.0.0 }},value:{{d.record.1|default:0.0}} * radius * scaleFactor * 0.9},
+			{% endif %}{% endfor %}
+	{% else %}{% if field == 'mpg' %}
+			{% for l,d in data.iteritems %} {% if d.mpg_weighted > 0 %}
+			{lat:{{ l.0 }},lng:{{ l.1 }},value: {{ d.mpg_weighted }} },
+			{% endif %}
+			{% endfor %}
+	{% else %}{% if field == 'mpg2' %}
+			{% for l,d in data.iteritems %} {% if d.mpg_weighted > 0 %}
+			{lat:{{ l.0 }},lng:{{ l.1 }},value: 1.0/{{ d.mpg_highway }} },
+			{% endif %}
+			{% endfor %}
+	{% else %}{% if field == 'score' %}
+			{% for l,d in data.iteritems %}
+			{lat:{{ l.0 }},lng:{{ l.1 }},value: {{ d.total_score }} },
+			{% endfor %}
+	{% else %}
+			{% for d in data.shapeRecords %}
+			{lat:{{ d.shape.points.0.1 }},lng:{{ d.shape.points.0.0 }},value:{{d.record.0}} * radius * scaleFactor * 0.2},
+			{% endfor %}
+	{% endif %}{% endif %}{% endif %}{% endif %}
+		]
+	};
+	
+	data.max = data.data.reduce(function(a, b) {
+		return Math.max(a, b.value);
+	}, 0) + 0.15;
+	data.min = data.data.reduce(function(a, b) {
+		return Math.min(a, b.value);
+	}, 1000000);
+	
+	heatmapLayer.setData(data);
+	
+	{% for d in zipcodes.shapeRecords %}{% if d.record.2 == 'Boston' %}
+	L.polygon([
+		{% for p in d.shape.points%}[{{p.1}}, {{p.0}}],{% endfor %}
+	], {opacity: 0.5, fillOpacity: 0.1, weight:1}).addTo(map);
+	{% endif %}{% endfor %}
+});
+</script>
+{% endif %}
+
+</head>
+
+<body>
+{% if error %}
+<h1>Oops! {{ error }}</h1>
+{% else %}
+<div id="map" style="width:100%; height:100%;"></div>
+{% endif %}
+</body>
+</html>

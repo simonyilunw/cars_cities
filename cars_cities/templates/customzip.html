@@ -1,0 +1,100 @@
+	{% load staticfiles %}
+<html>
+<head>
+
+{% if polygon %}
+<title>{{ polygon.name }}: {{ var_name }} </title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/car_cities{% static 'js/heatmap.min.js' %}"></script>
+<script src="/car_cities{% static 'js/heatmap-leaflet.js' %}"></script>
+
+<style>
+#map { height: 100%; }
+.legend {
+    line-height: 18px;
+    color: #555;
+    margin-bottom: 150px !important;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.info {
+    padding: 6px 8px;
+    font: 20px/22px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+
+	var mapLayer = L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
+	    attribution: '',
+	    maxZoom: 18
+	});
+	
+	var map = L.map('map', {
+		center: {{ polygon.center }},
+		zoom: 12,
+		layers: [mapLayer]
+	});
+	
+	var data = [
+		{% for zipcode, d in zipcodes.iteritems %}
+    [{{ d.polygon }}, {{ d.r }}, {{ d.g }}, {{ d.b }}],
+		{% endfor %}
+	];
+	
+	function getColorbyValue(r, g, b) {
+    return rgbToHex(r,g,b);
+	}
+
+	function componentToHex(c) {
+		c = Math.round(c);
+		if (c > 255) c = 255;
+		if (c < 0) c = 0;
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+
+	function rgbToHex(r, g, b) {
+	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
+	
+	$.each(data, function(index, value) {
+		L.polygon(value[0], {
+			fillColor: getColorbyValue(value[1], value[2], value[3]),
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	
+});
+
+</script>
+{% endif %}
+
+</head>
+
+<body>
+{% if error %}
+<h1>Oops! {{ error }}</h1>
+{% else %}
+<div id="map" style="width:100%; height:100%;"></div>
+{% endif %}
+</body>
+</html>

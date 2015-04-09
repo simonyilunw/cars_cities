@@ -1,0 +1,375 @@
+	{% load staticfiles %}
+<html>
+<head>
+
+{% if polygon %}
+<title>{{ polygon.name }}{% if field == 'income' %} Income {%endif%} Heatmap</title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/car_cities{% static 'js/heatmap.min.js' %}"></script>
+<script src="/car_cities{% static 'js/heatmap-leaflet.js' %}"></script>
+
+<style>
+#map { height: 100%; }
+.legend {
+    line-height: 18px;
+    color: #555;
+    margin-bottom: 150px !important;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.info {
+    padding: 6px 8px;
+    font: 20px/22px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+
+	var cm1 = new Array(65);
+	var cm2 = new Array(65);
+	var cm3 = new Array(65);
+	initialColor();
+	var mapLayer = L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
+	    attribution: '',
+	    maxZoom: 18
+	});
+	
+	var map = L.map('map', {
+		center: {{ polygon.center }},
+		zoom: 12,
+		layers: [mapLayer]
+	});
+	
+	{% if field == 'zipcode_price_avg' %}
+	var data = [
+		{% for zipcode, data in zipcodes.iteritems %}
+		[{{ data.polygon }}, {{ data.price }}],
+		{% endfor %}
+	];
+	{% else %}{% if field == 'zipcode_income_avg' %}
+	var data = [
+		{% for zipcode, data in zipcodes.iteritems %}
+		[{{ data.polygon }}, {{ data.income }}],
+		{% endfor %}
+	];
+
+	{% else %}{% if field == 'crime_rates' %}
+	var data = [
+		{% for zipcode, d in zipcodes.iteritems %}
+		{% if "crime" in d %}
+		[{{ d.polygon }},  {{d.crime }}],
+	
+		{% endif %}
+		{% endfor %}
+	];
+
+	{% else %}{% if field == 'crime_preds' %}
+	var data = [
+		{% for zipcode, d in zipcodes.iteritems %}
+		{% if "crime" in d %}
+		[{{ d.polygon }}, {{ d.crime }}],
+		{% endif %}
+		{% endfor %}
+	];
+	{% else %}{% if field == 'actual' or field == 'predicted'%}
+	var data = [
+		{% for zipcode, d in zipcodes.iteritems %}
+		{% if "demog" in d %}
+		[{{ d.polygon }}, {{ d.demog }}],
+		{% endif %}
+		{% endfor %}
+	];
+	{% else %}{% if field == 'income' %}
+	var data = [
+		{% for d in data.shapeRecords %}{% if d.record.1 and d.record.1 != 'None' %}
+		[{{ d.shape.points.0.1 }}, {{ d.shape.points.0.0 }}, {{ d.record.1 }}],
+		{% endif %}{% endfor %}
+	];
+	{% else %}{% if field == 'car_density' %}
+	var data = [
+		{% for l,d in data.iteritems %}
+		[{{ l.0 }}, {{ l.1 }}, {{ d.total_score }}],
+		{% endfor %}
+	];
+	{% else %}{% if field == 'block_price_avg' %}
+	var data = [
+		{% for k, v in data.iteritems %}{% if v.block_price_average %}
+		[{{ k.0 }}, {{ k.1 }}, {{ v.block_price_average }}],
+		{% endif %}{% endfor %}
+	];
+	{% else %}
+	var data = [
+		{% for d in data.shapeRecords %}
+		[{{ d.shape.points.0.1 }}, {{ d.shape.points.0.0 }}, {{ d.record.0 }}],
+		{% endfor %}
+	];
+	{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
+	
+	{% if field in zipcode_fields or field == 'crime_rates' or field == 'crime_preds'  or field == 'actual' or field == 'predicted'%}
+	var max = data.reduce(function(a, b) {
+		return Math.max(a, b[1]);
+	}, 0);
+	var min = data.reduce(function(a, b) {
+		return Math.min(a, b[1]);
+	}, 1000000000);
+	{% else %}{% if field == 'race' or field == 'race_preds' or field == 'edu' or field == 'edu_preds'%}
+	var max = 3;
+	var min = 1;
+	{% else %}
+	var max = data.reduce(function(a, b) {
+		return Math.max(a, b[2]);
+	}, 0) * 0.5;
+	var min = data.reduce(function(a, b) {
+		return Math.min(a, b[2]);
+	}, 1000000000);
+	{% endif %}{% endif %}
+
+	{% if field == 'actual' or field == 'predicted' %}
+		//var max = 0.50;
+		//var min = 0;
+	{% endif%}
+
+// Income: 3
+// white: 16
+// black: 17
+// asian: 18
+// highschool: 20
+// bachelor: 22
+// gradschool: 23
+
+
+	var delta = max - min;
+	console.log('Max is ' + max);
+	console.log('Min is ' + min);
+
+
+
+	if (max == 250001) {max = 170000} //boston 
+	if (max == 11967.0013736 ) {max = 11700} //houston 197
+	if (min == 8629.47061347 ) {min = 8400}
+	//if (max == 13696.5714286 ) {max = 13000} //washington 310
+	
+	var highColor = [255, 0, 0];
+	var midColor = [255, 255, 0];
+	var lowColor = [0, 0, 255];
+	var lowStop = 0.10;
+	var midStop = 0.55;
+	var highStop = 0.80;
+
+
+	function initialColor() {
+	    for (var i = 1; i <= 64; i++) {
+	        if (i <= 42) {
+	            cm1[i] = 1 * 255;
+	            cm2[i] = Math.round((1 - (i - 1) * 1 / 41) * 255);
+	            cm3[i] = 0;
+	        }
+	        else {
+	            cm1[i] = Math.round((1 - (i - 42) * 0.5 / 22) * 255);
+	            cm2[i] = 0;
+	            cm3[i] = 0;
+	        }
+	    }
+	}
+
+	function getColorbyValue(value, min, max) {
+
+		value = (value - min)/(max - min);
+		if (value > 1)  value = 1
+		if (value < 0) value = 0
+	    var thisColor = new Array(4);
+	    value = Math.round(value * 63) + 1;
+	    thisColor[1] = cm1[value];
+	    thisColor[2] = cm2[value];
+	    thisColor[3] = cm3[value];
+
+	    return rgbToHex(thisColor[1], thisColor[2], thisColor[3]);
+	}
+
+	function getReversedColorbyValue(value, min, max) {
+
+		value = (value - min)/(max - min);
+		if (value > 1)  value = 1
+		if (value < 0) value = 0
+		value = 1- value;
+	    var thisColor = new Array(4);
+	    value = Math.round(value * 63) + 1;
+	    thisColor[1] = cm1[value];
+	    thisColor[2] = cm2[value];
+	    thisColor[3] = cm3[value];
+
+	    return rgbToHex(thisColor[1], thisColor[2], thisColor[3]);
+	}
+
+	function getColorforCrime(value, min, max) {
+
+		if (value == 2)  return rgbToHex(255, 0, 0)
+		if (value == 1) return rgbToHex(0, 255, 0)
+	   
+
+	}
+	
+	function componentToHex(c) {
+		c = Math.round(c);
+		if (c > 255) c = 255;
+		if (c < 0) c = 0;
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+
+	function rgbToHex(r, g, b) {
+	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
+	
+	{% if field in zipcode_fields  or field == 'actual' or field == 'predicted' %}
+	$.each(data, function(index, value) {
+		L.polygon(value[0], {
+			fillColor: getColorbyValue(value[1], min, max), 
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	{% else %}{% if  field == 'crime_preds' or field == 'crime_rates'  %}
+	$.each(data, function(index, value) {
+		L.polygon(value[0], {
+			fillColor: getReversedColorbyValue(value[1], min, max), 
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	{% else %}
+	$.each(data, function(index, value) {
+		if (value[2] > 200000) console.log('Over 200k! (' + value[0] + ', ' + value[1] + ')');
+		L.circle([value[0], value[1]], 25, {
+			fillColor: getColorbyValue(value[2], min, max), 
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	{% endif %}{% endif %}
+	
+	{% if polygon.data %}
+	L.polygon({{ polygon.data }}, {
+		fillOpacity: 0.0,
+	}).addTo(map);
+	{% endif %}
+	{% if field == 'race' or field == 'race_preds' %}
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [1, 2, 3],
+	        labels = ['white', 'black', 'asia' ];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	next = 1
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        labels[i] + (next ? '<br />' : '');
+	    }
+	    return div;
+	};
+	{% else %}{% if field == 'edu' or field == 'edu_preds' %}
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [1, 2, 3],
+	        labels = ['highschool', 'college', 'grad school' ];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	next = 1
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        labels[i] + (next ? '<br />' : '');
+	    }
+	    return div;
+	};
+	{% else %}{% if field == 'crime_rates' or field == 'crime_preds' %}
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
+	        labels = [];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	var curr = grades[i];
+	    	var next = grades[i + 1];
+			if (max < 2) {
+	    		curr *= 100;
+	    		curr = Math.round(curr) + '%';
+	    		next *= 100;
+	    		next = Math.round(next) + '%';
+	    	}
+	    	else {
+	    		curr = Math.round(curr);
+	    		next = Math.round(next);
+	    	}
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getReversedColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        curr + (next ? '&ndash;' + next + '<br />' : '+');
+	    }
+	    return div;
+	};
+	{% else %}
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
+	        labels = [];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	var curr = grades[i];
+	    	var next = grades[i + 1];
+			if (max < 2) {
+	    		curr *= 100;
+	    		curr = Math.round(curr) + '%';
+	    		next *= 100;
+	    		next = Math.round(next) + '%';
+	    	}
+	    	else {
+	    		curr = Math.round(curr);
+	    		next = Math.round(next);
+	    	}
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        curr + (next ? '&ndash;' + next + '<br />' : '+');
+	    }
+	    return div;
+	};
+	{% endif %}{% endif %}{% endif %}
+	legend.addTo(map);
+});
+
+</script>
+{% endif %}
+
+</head>
+
+<body>
+{% if error %}
+<h1>Oops! {{ error }}</h1>
+{% else %}
+<div id="map" style="width:100%; height:100%;"></div>
+{% endif %}
+</body>
+</html>

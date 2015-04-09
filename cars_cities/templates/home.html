@@ -1,0 +1,104 @@
+<html>
+
+<head>
+<title>Cars and Cities</title>
+
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/css/theme.blue.css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.widgets.min.js"></script>
+
+<script>
+$(document).ready(function() {
+	$('#main_table').tablesorter({theme: 'blue', sortList: [[6,0]], widgets: ['zebra', 'stickyHeaders']});
+});
+</script>
+</head>
+
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Cars and Cities Project Home</h1>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-12">
+		<p><a href="{% url 'coverage' %}">Coverage Analysis</a></p>
+		<p><a href="{% url 'results' %}">GI Clustering/Heatmap Results and City wide aggregation</a></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="main_table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>City name</th>
+					<th>Total Samples</th>
+					<th>Average Car Price</th>
+					<th>Total Cars</th>
+					<th>Domestic Car Ratio</th>
+					<th>Foreign Car Ratio</th>
+					<th>Hybrid Car Ratio</th>
+					<th>Average MPG</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for name,data in aggregate.iteritems %}
+				<tr>
+					<td>{{ name | capfirst }}</td>
+					<td>{{ data.total_samples }}</td>
+					<td>{{ data.car_price_avg }}</td>
+					<td>{{ data.total_cars }}</td>
+					<td>{{ data.car_domestic_ratio }}</td>
+					<td>{{ data.car_foreign_ratio }}</td>
+					<td>{{ data.car_hybrid_ratio }}</td>
+					<td>{{ data.car_mpg_highway_avg }}</td>
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!--
+	<div class="row">
+		<div class="col-md-12">
+			<table id="main_table" class="table table-striped">
+				<thead>
+				<tr>
+					<th>City ID</th>
+					<th>City name</th>
+					<th>State</th>
+					<th>City Area (sq. miles)</th>
+					<th># Samples</th>
+					<th>Sampling Area (sq. miles)</th>
+					<th>Coverage</th>
+					<th>Coverage Map</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for city in cities %}
+				<tr>
+					<td>{{ city.cityid }}</td>
+					<td>{{ city.name }}</td>
+					<td>{{ city.state }}</td>
+					<td>{{ city.area }}</td>
+					<td>{{ city.samples }}</td>
+					<td>{{ city.sample_area }}</td>
+					<td>{{ city.coverage }}</td>
+					<td><a href="{% url 'samples' cityid=city.cityid %}">Coverage</a></td>
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	  -->
+</div>
+</body>
+</html>
