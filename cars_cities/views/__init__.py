@@ -8,3 +8,7 @@ from heatmap import Heatmap
 from coverage import Coverage
 from countryheatmap import CountryHeatmap
 from customzip import CustomZip
+<<<<<<< HEAD
+=======
+from voting import Voting
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df

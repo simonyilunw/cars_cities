@@ -5,7 +5,11 @@ from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from views import Home, Stats, Samples, AggregateStats, Hotspots, Results, \
+<<<<<<< HEAD
     Heatmap, Coverage, CountryHeatmap, CustomZip
+=======
+    Heatmap, Coverage, CountryHeatmap, CustomZip, Voting
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
 urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(pattern_name='home')),
@@ -21,7 +25,12 @@ urlpatterns = patterns('',
     url(r'^customzip/$', CustomZip.as_view(), name='customzip'),
     url(r'^countryheatmap$', CountryHeatmap.as_view(), name='countryheatmap'),
     url(r'^admin/', include(admin.site.urls)),
+<<<<<<< HEAD
     url(r'^car_cities/', include(staticfiles_urlpatterns()))
+=======
+    url(r'^car_cities/', include(staticfiles_urlpatterns())),
+    url(r'^voting/(?P<cityid>[\d]+)$', Voting.as_view(), name='voting')
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 )
 
 urlpatterns += staticfiles_urlpatterns()

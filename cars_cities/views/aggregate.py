@@ -8,6 +8,10 @@ from ..models import City
 from ..utils.files import pickle_save, pickle_load
 from ..utils.shapefile import Reader
 import random
+<<<<<<< HEAD
+=======
+import operator
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
 
 class AggregateStats(View):
@@ -20,6 +24,11 @@ class AggregateStats(View):
         cities = pickle_load(join(settings.STATS_DIR, 'aggregate'))
         green = pickle_load(join(settings.STATS_DIR, 'city_green'))
         state_data = pickle_load(join(settings.STATS_DIR, 'state_data'))
+<<<<<<< HEAD
+=======
+        green_total = pickle_load(join(settings.STATS_DIR, 'green_total.p'))
+        green_trans = pickle_load(join(settings.STATS_DIR, 'green_trans.p'))
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
         badList = [115, 117, 121, 122, 128, 129, 132, 135, 144, 160, 167, 173, 183, 192, 195, 197, 203, 212, 226, 229, 234, 258, 266, 276, 278]
 
 
@@ -78,6 +87,7 @@ class AggregateStats(View):
             for cityID in badList:
                 del cities[cityID]
         context = {}
+<<<<<<< HEAD
 
        # if field == "state_data" or field == "state_gt":
         cities_state = state_data
@@ -86,6 +96,32 @@ class AggregateStats(View):
                 data["value"] = data["data"]
             elif field == "state_gt":
                 data["value"] = data["gt"]
+=======
+        green = green_trans
+        # print green_trans
+       # if field == "state_data" or field == "state_gt":
+        cities_state = state_data
+        for city_id, data in cities_state.items():
+
+            state_name = city_id.lower().replace(' ', '')
+            if state_name == 'connecticut':
+                state_name = 'conneticut'
+            if state_name == 'massachusetts':
+                state_name = 'massachussetts'
+            if state_name == 'pennsylvania':
+                state_name = 'pennsilvania'
+            if state_name ==    'districtofcolumbia':
+                state_name = 'dc'
+            if field == "state_data":
+                # data["value"] = data["data"]
+                if state_name in green:
+                    data["value"]  = green[state_name]['data2']
+                else:
+                    print state_name
+            elif field == "state_gt":
+                data["value"]  = green[state_name]['gt']
+               
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
             else:
                 data["value"] = 0
                 if city_id == 'Mississippi':
@@ -215,7 +251,11 @@ class AggregateStats(View):
                 # if city_id == 1:
                 #     data["value"] = 5
 
+<<<<<<< HEAD
 
+=======
+        self.rank_state(cities_state, field)
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
         #print settings.LATLNGS_SHP_DIR
         shape = Reader(path.join(settings.LATLNGS_SHP_DIR, 'states'))
@@ -224,7 +264,11 @@ class AggregateStats(View):
         #print cities_state
         state_all = {}
         for sr in shape.shapeRecords():
+<<<<<<< HEAD
             print sr.record
+=======
+            #print sr.record
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
             if sr.record[0] in cities_state:
             
@@ -276,3 +320,21 @@ class AggregateStats(View):
             context['field'] = field
             print field
         return render(request, 'aggregate.html', context)
+<<<<<<< HEAD
+=======
+
+
+    def rank_state(self, state_data, field):
+        rank_dict = {x:y['value'] for x,y in state_data.items()}
+        if field == 'state_data':
+            state_sorted = sorted(rank_dict.items(), key=operator.itemgetter(1), reverse=True)
+        elif field == 'state_gt':
+            state_sorted = sorted(rank_dict.items(), key=operator.itemgetter(1))
+        state_sorted = {y:(idx + 1) for idx, (x, y )in enumerate(state_sorted)}
+
+        for x in state_data:
+            state_data[x]['value'] = state_sorted[state_data[x]['value']] 
+        return state_data
+
+
+>>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
