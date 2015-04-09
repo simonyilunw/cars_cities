@@ -140,12 +140,24 @@ $(document).ready(function() {
 		return Math.min(a, b[2]);
 	}, 1000000000);
 	{% endif %}{% endif %}
-
+	
 	{% if field == 'actual' or field == 'predicted' %}
-		//var max = 0.50;
-		//var min = 0;
+	{% if vari == '3' %}
+		var max = 100000;
+		var min = 20000;
+	{% else %}{% if vari == '16' or vari == '17' %}
+		var max = 1;
+		var min = 0;
+	{% else %}{% if vari == '18' %}
+		var max = 0.4;
+		var min = 0;
+	{% else %}{% if vari == '20' or vari == '20' or vari == '20' %}
+		var max = 0.5;
+		var min = 0;
+	{% endif %}{% endif %}{% endif %}{% endif %}
 	{% endif%}
-
+	
+	
 // Income: 3
 // white: 16
 // black: 17

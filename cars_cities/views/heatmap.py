@@ -22,6 +22,7 @@ class Heatmap(View):
     
     def get(self, request, cityid):
         field = request.GET.get('field')
+        variable = request.GET.get('variable', '3')
         
         context = {}
         template = 'heatmap2.html' if field in DENSITY_HEATMAP_FIELDS else 'heatmap.html'
@@ -66,7 +67,7 @@ class Heatmap(View):
 
                 #print data
         elif field == 'actual' or field == 'predicted':
-            variable = request.GET.get('variable')
+            
             try:
                 context['zipcodes'] = pickle_load(path.join(settings.CACHE_DIR, 'zipcodes/pickled/%s' % cityid))
             
@@ -112,6 +113,9 @@ class Heatmap(View):
         if field:
             print 'Using field ', field
             context['field'] = field
+        if variable:
+            context['vari'] = variable
+
         
         # special case boston to use MA data challenge data
         if str(cityid) == '153' and (field in ZIPCODE_FIELDS):
@@ -151,6 +155,7 @@ class Heatmap(View):
         
         context['zipcode_fields'] = ZIPCODE_FIELDS
         context['density_heatmap_fields'] = DENSITY_HEATMAP_FIELDS
+
         return render(request, template, context)
     
     def int_to_zipcode(self, n):
