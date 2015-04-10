@@ -115,6 +115,8 @@ class Heatmap(View):
             context['field'] = field
         if variable:
             context['vari'] = int(variable)
+        if cityid:
+            context['cityid'] = int(cityid)
 
         
         # special case boston to use MA data challenge data
