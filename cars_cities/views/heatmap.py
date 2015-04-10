@@ -85,7 +85,7 @@ class Heatmap(View):
             				context['zipcodes'][sr.record[1]] = {}
                 for zipcode, d in context['zipcodes'].iteritems():
                 	
-                    if zipcode in data:
+                    if zipcode in data and data[zipcode]['census'][int(variable)] != -1:
                     	if field == 'actual':
                         	context['zipcodes'][zipcode]['demog'] = data[zipcode]['census'][int(variable)]
                         if field == 'predicted':
@@ -114,7 +114,7 @@ class Heatmap(View):
             print 'Using field ', field
             context['field'] = field
         if variable:
-            context['vari'] = variable
+            context['vari'] = int(variable)
 
         
         # special case boston to use MA data challenge data

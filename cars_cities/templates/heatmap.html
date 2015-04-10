@@ -142,19 +142,25 @@ $(document).ready(function() {
 	{% endif %}{% endif %}
 	
 	{% if field == 'actual' or field == 'predicted' %}
-	{% if vari == '3' %}
+	{% if vari == 3 %}
 		var max = 100000;
 		var min = 20000;
-	{% else %}{% if vari == '16' or vari == '17' %}
+	{% else %}{% if vari == 16 or vari == 17 %}
 		var max = 1;
 		var min = 0;
-	{% else %}{% if vari == '18' %}
+	{% else %}{% if vari == 18 %}
 		var max = 0.4;
 		var min = 0;
-	{% else %}{% if vari == '20' or vari == '22' or vari == '23' %}
+	{% else %}{% if vari == 20 or vari == 22 or vari == 23 %}
 		var max = 0.5;
 		var min = 0;
-	{% endif %}{% endif %}{% endif %}{% endif %}
+	{% else %}{% if vari >= 37 and vari <= 45%}
+		var max = 5;
+		var min = 0;
+	{% else %}{% if vari >= 46 %}
+		var max = 10;
+		var min = 1;
+	{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
 	{% endif%}
 	
 	
