@@ -140,7 +140,8 @@ $(document).ready(function() {
 		return Math.min(a, b[2]);
 	}, 1000000000);
 	{% endif %}{% endif %}
-	
+	console.log('Max is ' + max);
+	console.log('Min is ' + min);
 	{% if field == 'actual' or field == 'predicted' %}
 	{% if vari == 3 %}
 		var max = 100000;
@@ -163,7 +164,18 @@ $(document).ready(function() {
 	{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
 	{% endif%}
 	
-	
+	{% if cityid == 153 and vari == 3%}
+		var max = 110000;
+		var min = 40000;
+	{% endif %}
+	{% if cityid == 153 and vari == 18%}
+		var max = 0.3;
+		var min = 0.0;
+	{% endif %}
+	{% if cityid == 153 and vari == 22%}
+		var max = 0.45;
+		var min = 0.1;
+	{% endif %}
 // Income: 3
 // white: 16
 // black: 17
@@ -174,8 +186,7 @@ $(document).ready(function() {
 
 
 	var delta = max - min;
-	console.log('Max is ' + max);
-	console.log('Min is ' + min);
+	
 
 
 
