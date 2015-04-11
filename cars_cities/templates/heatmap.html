@@ -142,6 +142,9 @@ $(document).ready(function() {
 	{% endif %}{% endif %}
 	console.log('Max is ' + max);
 	console.log('Min is ' + min);
+
+
+	{% if ranking == False %}
 	{% if field == 'actual' or field == 'predicted' %}
 	{% if vari == 3 %}
 		var max = 100000;
@@ -177,7 +180,7 @@ $(document).ready(function() {
 		var min = 0.1;
 	{% endif %}
 	{% if cityid == 187 and vari == 18%}
-		var max = 0.2;
+		var max = 0.15;
 		var min = 0.0;
 	{% endif %}
 	{% if cityid == 293 and vari == 48%}
@@ -188,6 +191,40 @@ $(document).ready(function() {
 		var max = 9;
 		var min = 4.5;
 	{% endif %}
+	{% if cityid == 293 and vari == 53%}
+		var max = 9;
+		var min = 4.5;
+	{% endif %}
+	{% if cityid == 225 and vari == 47%}
+		var max = 7.0;
+		var min = 0.0;
+	{% endif %}
+	{% if cityid == 225 and vari == 39%}
+		var max = 3.0;
+		var min = 0.0;
+	{% endif %}
+	{% if cityid == 234 and vari == 47%}
+		var max = 10.0;
+		var min = 4.0;
+	{% endif %}
+	{% if cityid == 235 and vari == 47%}
+		var max = 9.0;
+		var min = 2.0;
+	{% endif %}
+	{% if cityid == 262 and vari == 39%}
+		var max = 6.0;
+		var min = 0.0;
+	{% endif %}
+	{% if cityid == 262 and vari == 49%}
+		var max = 8.0;
+		var min = 4.0;
+	{% endif %}
+	{% if cityid == 153 and vari == 38%}
+		var max = 3.0;
+		var min = 0.5;
+	{% endif %}
+	{% endif %}
+
 // Income: 3
 // white: 16
 // black: 17
@@ -237,6 +274,9 @@ $(document).ready(function() {
 		if (value < 0) value = 0
 	    var thisColor = new Array(4);
 	    value = Math.round(value * 63) + 1;
+	    {% if ranking %}
+	    	value = 65 - value;
+	    {% endif %}
 	    thisColor[1] = cm1[value];
 	    thisColor[2] = cm2[value];
 	    thisColor[3] = cm3[value];
@@ -376,7 +416,8 @@ $(document).ready(function() {
 	    var div = L.DomUtil.create('div', 'info legend'),
 	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
 	        labels = [];
-
+	    console.log(max)
+	    console.log(grades)
 	    // loop through our density intervals and generate a label with a colored square for each interval
 	    for (var i = 0; i < grades.length; i++) {
 	    	var curr = grades[i];
@@ -386,6 +427,10 @@ $(document).ready(function() {
 	    		curr = Math.round(curr) + '%';
 	    		next *= 100;
 	    		next = Math.round(next) + '%';
+	    	}
+	    	else if (max < 10){
+	    		curr = Math.round(curr * 100) / 100;
+	    		next = Math.round(next * 100) / 100;
 	    	}
 	    	else {
 	    		curr = Math.round(curr);

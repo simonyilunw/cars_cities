@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 from ..utils.files import pickle_load
 from ..utils.shapefile import Reader
+import operator
 
 
 ZIPCODE_FIELDS = {
@@ -23,6 +24,7 @@ class Heatmap(View):
     def get(self, request, cityid):
         field = request.GET.get('field')
         variable = request.GET.get('variable', '3')
+        ranking = request.GET.get('ranking', False)
         
         context = {}
         template = 'heatmap2.html' if field in DENSITY_HEATMAP_FIELDS else 'heatmap.html'
@@ -78,18 +80,28 @@ class Heatmap(View):
                 context['error'] = e
             else:
 
-            	if str(cityid) == '153':
-            		zipcodes = Reader(path.join(settings.MA_DATA_DIR, 'ma_zipcodes_poly_latlng'))
-            		for sr in zipcodes.shapeRecords():
-            			if sr.record[2] == 'Boston':
-            				context['zipcodes'][sr.record[1]] = {}
+                if str(cityid) == '153':
+                    zipcodes = Reader(path.join(settings.MA_DATA_DIR, 'ma_zipcodes_poly_latlng'))
+                    for sr in zipcodes.shapeRecords():
+                        if sr.record[2] == 'Boston':
+                            context['zipcodes'][sr.record[1]] = {}
                 for zipcode, d in context['zipcodes'].iteritems():
-                	
+                    
                     if zipcode in data and data[zipcode]['census'][int(variable)] != -1:
-                    	if field == 'actual':
-                        	context['zipcodes'][zipcode]['demog'] = data[zipcode]['census'][int(variable)]
+                        if field == 'actual':
+                            context['zipcodes'][zipcode]['demog'] = data[zipcode]['census'][int(variable)]
                         if field == 'predicted':
-                        	context['zipcodes'][zipcode]['demog'] = data[zipcode]['preds'][int(variable)]
+                            context['zipcodes'][zipcode]['demog'] = data[zipcode]['preds'][int(variable)]
+                if ranking:
+                    z_ranking = {}
+                    for zipcode in context['zipcodes']:
+                        if 'demog' in context['zipcodes'][zipcode]:
+                            z_ranking[zipcode] = context['zipcodes'][zipcode]['demog']
+                    z_ranking = sorted(z_ranking.items(), key=operator.itemgetter(1), reverse=True)
+                    z_ranking = {x:(idx + 1) for idx, (x, y) in enumerate(z_ranking)}
+                    for zipcode in context['zipcodes']:
+                        if 'demog' in context['zipcodes'][zipcode]:
+                            context['zipcodes'][zipcode]['demog'] = z_ranking[zipcode]
                         #print context['zipcodes'][zipcode]['demog']
             
 
@@ -117,6 +129,8 @@ class Heatmap(View):
             context['vari'] = int(variable)
         if cityid:
             context['cityid'] = int(cityid)
+        if ranking:
+        	context['ranking'] = ranking
 
         
         # special case boston to use MA data challenge data
@@ -157,6 +171,7 @@ class Heatmap(View):
         
         context['zipcode_fields'] = ZIPCODE_FIELDS
         context['density_heatmap_fields'] = DENSITY_HEATMAP_FIELDS
+
 
         return render(request, template, context)
     

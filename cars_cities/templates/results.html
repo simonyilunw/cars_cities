@@ -155,10 +155,7 @@ $(document).ready(function() {
 					<th>City name</th>
 					<th>State</th>
 					<th>Moran I</th>
-					<th>Score Heatmap (Sparse)</th>
-					<th>Score Heatmap (Interp)</th>
-					<th>MPG Heatmap</th>
-					<th>MPG Heatmap</th>
+					
 					<th>Getis-Ord Cluster</th>
 					<th>Car Price Heatmap</th>
 					<th>Car Price Zipcode Heatmap</th>
@@ -169,8 +166,12 @@ $(document).ready(function() {
 					<th>Predicted Race</th>
 					<th>Actual Education</th>
 					<th>Predicted Education </th>
-					<th>Acutal Crime</th>
+					<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acutal Crime</th>
 					<th>Predicted Crime</th>
+					<th>Score Heatmap (Sparse)</th>
+					<th>Score Heatmap (Interp)</th>
+					<th>MPG Heatmap</th>
+					<th>MPG Heatmap</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -180,6 +181,73 @@ $(document).ready(function() {
 					<td>{{ city.name }}</td>
 					<td>{{ city.state }}</td>
 					<td>{{ city.moran_index }}</td>
+					
+					<td>{% if city.hotspots_available %}<a target="_blank" href="{% url 'hotspots' cityid=city.cityid %}">Car Price GI* Cluster</a>{% endif %}</td>
+					<td>{% if city.hotspots_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}">Car Price Heatmap</a>{% endif %}</td>
+					<td>{% if city.zipcode_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=zipcode_price_avg">Car Price Zipcode Heatmap</a>{% endif %}</td>
+					<td>{% if city.zipcode_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=zipcode_income_avg">Income Zipcode Heatmap</a>{% endif %}</td>
+					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=3">Income</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=3&ranking=True"> (R)</a></td>
+					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=3">Income</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=3&ranking=True"> (R)</a></td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=16">White</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=16&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=17">Black</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=17&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=18">Asian</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=18&ranking=True"> (R)</a><br />
+					</td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=16">White</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=16&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=17">Black</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=17&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=18">Asian</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=18&ranking=True"> (R)</a><br />
+					</td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=20">Highschool</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=20&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=22">Bachelor</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=22&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=23">Gradschool</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=23&ranking=True"> (R)</a><br />
+					</td>
+					<td>
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=20">Highschool</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=20&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=22">Bachelor</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=22&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=23">Gradschool</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=23&ranking=True"> (R)</a><br />
+					</td>
+					<td  style="font-size:10px;">
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=37">Aggrevated Assault</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=37&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=38">Burglary</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=38&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=39">Crime Against People</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=39&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=40">Crime Against Property</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=40&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=41">Homicide</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=41&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=42">Larceny</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=42&ranking=True">v</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=43">Motor Vehicle</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=43&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=44">Robbery</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=44&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=45">Rape</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=45&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=46">Aggrevated Assault (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=46&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=47">Burglary (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=47&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=48">Crime Against People (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=48&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=49">Crime Against Property (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=49&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=50">Homicide (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=50&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=51">Larceny (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=51&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=52">Motor Vehicle (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=52&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=53">Robbery (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=53&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=54">Rape (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=54&ranking=True"> (R)</a><br />
+					</td>
+					<td  style="font-size:10px">
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=37">Aggrevated Assault</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=37&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=38">Burglary</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=38&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=39">Crime Against People</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=39&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=40">Crime Against Property</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=40&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=41">Homicide</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=41&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=42">Larceny</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=42&ranking=True">v</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=43">Motor Vehicle</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=43&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=44">Robbery</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=44&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=45">Rape</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=45&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=46">Aggrevated Assault (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=46&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=47">Burglary (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=47&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=48">Crime Against People (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=48&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=49">Crime Against Property (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=49&ranking=True"> (R)</a><br/ >
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=50">Homicide (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=50&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=51">Larceny (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=51&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=52">Motor Vehicle (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=52&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=53">Robbery (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=53&ranking=True"> (R)</a><br />
+						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=54">Rape (rank)</a><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=54&ranking=True"> (R)</a><br />
+					</td>
 					<td>{% if city.latlng_data_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=car_density">Heatmap</a>{% endif %}</td>
 					<td>{% if city.latlng_data_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=score">Heatmap</a>{% endif %}</td>
 					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=mpg">
@@ -192,72 +260,6 @@ $(document).ready(function() {
 					\frac{\sum p}{\sum (p*MPG)}
 					</div>
 					</a>{% endif %}</td>
-					<td>{% if city.hotspots_available %}<a target="_blank" href="{% url 'hotspots' cityid=city.cityid %}">Car Price GI* Cluster</a>{% endif %}</td>
-					<td>{% if city.hotspots_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}">Car Price Heatmap</a>{% endif %}</td>
-					<td>{% if city.zipcode_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=zipcode_price_avg">Car Price Zipcode Heatmap</a>{% endif %}</td>
-					<td>{% if city.zipcode_available %}<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=zipcode_income_avg">Income Zipcode Heatmap</a>{% endif %}</td>
-					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=3">Income</a></td>
-					<td><a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=3">Income</a></td>
-					<td>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=16">White</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=17">Black</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=18">Asian</a>
-					</td>
-					<td>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=16">White</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=17">Black</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=18">Asian</a>
-					</td>
-					<td>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=20">Highschool</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=22">Bachelor</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=23">Gradschool</a>
-					</td>
-					<td>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=20">Highschool</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=22">Bachelor</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=23">Gradschool</a>
-					</td>
-					<td  style="font-size:10px;">
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=37">Aggrevated Assault</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=38">Burglary</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=39">Crime Against People</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=40">Crime Against Property</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=41">Homicide</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=42">Larceny</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=43">Motor Vehicle</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=44">Robbery</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=45">Rape</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=46">Aggrevated Assault (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=47">Burglary (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=48">Crime Against People (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=49">Crime Against Property (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=50">Homicide (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=51">Larceny (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=52">Motor Vehicle (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=53">Robbery (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=actual&variable=54">Rape (rank)</a>
-					</td>
-					<td  style="font-size:10px">
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=37">Aggrevated Assault</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=38">Burglary</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=39">Crime Against People</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=40">Crime Against Property</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=41">Homicide</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=42">Larceny</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=43">Motor Vehicle</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=44">Robbery</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=45">Rape</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=46">Aggrevated Assault (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=47">Burglary (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=48">Crime Against People (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=49">Crime Against Property (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=50">Homicide (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=51">Larceny (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=52">Motor Vehicle (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=53">Robbery (rank)</a>
-						<a target="_blank" href="{% url 'heatmap' cityid=city.cityid %}?field=predicted&variable=54">Rape (rank)</a>
-					</td>
 				</tr>
 				{% endfor %}
 				</tbody>
