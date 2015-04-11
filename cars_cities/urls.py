@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^customzip/$', CustomZip.as_view(), name='customzip'),
     url(r'^countryheatmap$', CountryHeatmap.as_view(), name='countryheatmap'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^car_cities/', include(staticfiles_urlpatterns())),
+    url(r'^car_cities/', include(staticfiles_urlpatterns())), 
     url(r'^voting/(?P<cityid>[\d]+)$', Voting.as_view(), name='voting')
 )
 
