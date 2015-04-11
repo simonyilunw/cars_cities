@@ -311,7 +311,6 @@ class AggregateStats(View):
             print field
         return render(request, 'aggregate.html', context)
 
-
     def rank_state(self, state_data, field):
         rank_dict = {x:y['value'] for x,y in state_data.items()}
         if field == 'state_data':
