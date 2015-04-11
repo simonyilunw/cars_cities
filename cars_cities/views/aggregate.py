@@ -8,10 +8,7 @@ from ..models import City
 from ..utils.files import pickle_save, pickle_load
 from ..utils.shapefile import Reader
 import random
-<<<<<<< HEAD
-=======
 import operator
->>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
 
 class AggregateStats(View):
@@ -24,11 +21,10 @@ class AggregateStats(View):
         cities = pickle_load(join(settings.STATS_DIR, 'aggregate'))
         green = pickle_load(join(settings.STATS_DIR, 'city_green'))
         state_data = pickle_load(join(settings.STATS_DIR, 'state_data'))
-<<<<<<< HEAD
-=======
+
         green_total = pickle_load(join(settings.STATS_DIR, 'green_total.p'))
         green_trans = pickle_load(join(settings.STATS_DIR, 'green_trans.p'))
->>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
+
         badList = [115, 117, 121, 122, 128, 129, 132, 135, 144, 160, 167, 173, 183, 192, 195, 197, 203, 212, 226, 229, 234, 258, 266, 276, 278]
 
 
@@ -87,7 +83,7 @@ class AggregateStats(View):
             for cityID in badList:
                 del cities[cityID]
         context = {}
-<<<<<<< HEAD
+
 
        # if field == "state_data" or field == "state_gt":
         cities_state = state_data
@@ -96,7 +92,7 @@ class AggregateStats(View):
                 data["value"] = data["data"]
             elif field == "state_gt":
                 data["value"] = data["gt"]
-=======
+
         green = green_trans
         # print green_trans
        # if field == "state_data" or field == "state_gt":
@@ -121,7 +117,7 @@ class AggregateStats(View):
             elif field == "state_gt":
                 data["value"]  = green[state_name]['gt']
                
->>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
+
             else:
                 data["value"] = 0
                 if city_id == 'Mississippi':
@@ -251,11 +247,7 @@ class AggregateStats(View):
                 # if city_id == 1:
                 #     data["value"] = 5
 
-<<<<<<< HEAD
-
-=======
         self.rank_state(cities_state, field)
->>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
         #print settings.LATLNGS_SHP_DIR
         shape = Reader(path.join(settings.LATLNGS_SHP_DIR, 'states'))
@@ -264,11 +256,9 @@ class AggregateStats(View):
         #print cities_state
         state_all = {}
         for sr in shape.shapeRecords():
-<<<<<<< HEAD
+
             print sr.record
-=======
             #print sr.record
->>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
 
             if sr.record[0] in cities_state:
             
@@ -320,8 +310,6 @@ class AggregateStats(View):
             context['field'] = field
             print field
         return render(request, 'aggregate.html', context)
-<<<<<<< HEAD
-=======
 
 
     def rank_state(self, state_data, field):
@@ -336,5 +324,3 @@ class AggregateStats(View):
             state_data[x]['value'] = state_sorted[state_data[x]['value']] 
         return state_data
 
-
->>>>>>> 15bdf456eccbf81e9be372a48c4e6bdfc5ac30df
