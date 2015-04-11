@@ -3,7 +3,7 @@
 <head>
 
 {% if polygon %}
-<title>{{ polygon.name }}{% if field == 'income' %} Income {%endif%} Heatmap</title>
+<title>{{ polygon.name }} {{ census_attr }}{% if field == 'actual' %} Actual {%endif%}{% if field == 'predicted' %} Predicted {%endif%}{% if ranking %} Ranking {%endif%} Heatmap</title>
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

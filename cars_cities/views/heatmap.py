@@ -121,12 +121,71 @@ class Heatmap(View):
         if not self.request.GET.get('show_city_boundary') and 'data' in polygon:
             polygon.pop('data')
         context['polygon'] = polygon
+
+
+        census_attr = ['Median Age by Sex-Total',
+						'Median Age by Sex-Male',
+						'Median Age by Sex-Female',
+						'Income',
+						'Housing Units-Total',
+						'Occupancy Status-Total',
+						'Occupancy Status-Occupied',
+						'Occupancy Status-Vacant',
+						'Median Number of Rooms-Median number of rooms',
+						'TENURE BY UNITS IN STRUCTURE-Owner-occupied housing units',
+						'TENURE BY UNITS IN STRUCTURE-Renter-occupied housing units',
+						'Median household income --total',
+						'Median household income for units with a mortgage',
+						'Median household income for units without a mortgage',
+						'Bedrooms-Total',
+						'Total Population',
+						'white',
+						'black',
+						'asian',
+						'less than highschool education',
+						'highschool',
+						'some college',
+						'bachelors',
+						'grad school',
+						'aggregate number of vehicles for travel',
+						'age of own children',
+						'own children under 6 years',
+						'6-17 years',
+						'Percentage of Management',
+						'Percentage of service',
+						'Percentage of farming',
+						'Total Race',
+						'American Indian and Alaska Native alone',
+						'Native Hawaiian and Other Pacific Islander alone',
+						'Total Education',
+						'Median household income',
+						'housing',
+						'Aggrevated Assault',
+						'Burglary',
+						'Crime Against People',
+						'Crime Against Property',
+						'Homicide',
+						'Larceny',
+						'Motor Vehicle',
+						'Robbery',
+						'Rape',
+						'Aggrevated Assault (rank)',
+						'Burglary (rank)',
+						'Crime Against People (rank)',
+						'Crime Against Property (rank)',
+						'Homicide (rank)',
+						'Larceny (rank)',
+						'Motor Vehicle (rank)',
+						'Robbery (rank)',
+						'Rape (rank)']
+
         
         if field:
             print 'Using field ', field
             context['field'] = field
         if variable:
             context['vari'] = int(variable)
+            context['census_attr'] = census_attr[int(variable)]
         if cityid:
             context['cityid'] = int(cityid)
         if ranking:
@@ -166,6 +225,9 @@ class Heatmap(View):
                 'demog': context['zipcodes'][sr.record[1]]['demog'],
             }) for sr in zipcodes.shapeRecords() if sr.record[2] == 'Boston' and sr.record[1] in context['zipcodes'] and 'demog' in context['zipcodes'][sr.record[1]]])
             context['zipcodes'] = zipcode_data
+
+
+
 
    
         
