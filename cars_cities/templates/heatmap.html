@@ -54,11 +54,21 @@ $(document).ready(function() {
 	    maxZoom: 18
 	});
 	
+
+
+	{% if  vari < 37 %}
+	var map = L.map('map', {
+		center: {{ polygon.center }},
+		zoom: 12,
+		layers: [mapLayer]
+	});
+	{% else %}
 	var map = L.map('map', {
 		center: {{ polygon.center }},
 		zoom: 12,
 		//layers: [mapLayer]
 	});
+	{% endif %}
 	
 	{% if field == 'zipcode_price_avg' %}
 	var data = [

@@ -102,7 +102,7 @@ class Heatmap(View):
                     for zipcode in context['zipcodes']:
                         if 'demog' in context['zipcodes'][zipcode]:
                             context['zipcodes'][zipcode]['demog'] = z_ranking[zipcode]
-                if not ranking and variable >= 37:
+                if not ranking and int(variable) >= 37:
                     for zipcode in context['zipcodes']:
                         if 'demog' in context['zipcodes'][zipcode]:
                             context['zipcodes'][zipcode]['demog'] = round(context['zipcodes'][zipcode]['demog'])
