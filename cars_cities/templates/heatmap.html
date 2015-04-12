@@ -37,6 +37,9 @@
     margin: 0 0 5px;
     color: #777;
 }
+.leaflet-container {
+    background-color:rgba(255,0,0,0.0);
+}
 </style>
 
 <script>
@@ -54,7 +57,7 @@ $(document).ready(function() {
 	var map = L.map('map', {
 		center: {{ polygon.center }},
 		zoom: 12,
-		layers: [mapLayer]
+		//layers: [mapLayer]
 	});
 	
 	{% if field == 'zipcode_price_avg' %}
