@@ -416,8 +416,6 @@ $(document).ready(function() {
 	    var div = L.DomUtil.create('div', 'info legend'),
 	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
 	        labels = [];
-	    console.log(max)
-	    console.log(grades)
 	    // loop through our density intervals and generate a label with a colored square for each interval
 	    for (var i = 0; i < grades.length; i++) {
 	    	var curr = grades[i];

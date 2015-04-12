@@ -246,8 +246,8 @@ class AggregateStats(View):
 
                 # if city_id == 1:
                 #     data["value"] = 5
-
-        self.rank_state(cities_state, field)
+        if field == "state_data" or field == "state_gt":
+            cities_state =self.rank_state(cities_state, field)
 
         #print settings.LATLNGS_SHP_DIR
         shape = Reader(path.join(settings.LATLNGS_SHP_DIR, 'states'))
@@ -312,14 +312,19 @@ class AggregateStats(View):
         return render(request, 'aggregate.html', context)
 
     def rank_state(self, state_data, field):
-        rank_dict = {x:y['value'] for x,y in state_data.items()}
+        rank_dict = {}
+        for x,y in state_data.items():
+            rank_dict[x] = y['value'] 
         if field == 'state_data':
             state_sorted = sorted(rank_dict.items(), key=operator.itemgetter(1), reverse=True)
         elif field == 'state_gt':
             state_sorted = sorted(rank_dict.items(), key=operator.itemgetter(1))
-        state_sorted = {y:(idx + 1) for idx, (x, y )in enumerate(state_sorted)}
+        t = {}
+        for idx, (x, y )in enumerate(state_sorted):
+            t[y] = idx + 1
+
 
         for x in state_data:
-            state_data[x]['value'] = state_sorted[state_data[x]['value']] 
+            state_data[x]['value'] = t[state_data[x]['value']] 
         return state_data
 

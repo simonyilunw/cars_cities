@@ -98,10 +98,14 @@ class Heatmap(View):
                         if 'demog' in context['zipcodes'][zipcode]:
                             z_ranking[zipcode] = context['zipcodes'][zipcode]['demog']
                     z_ranking = sorted(z_ranking.items(), key=operator.itemgetter(1), reverse=True)
-                    z_ranking = {x:(idx + 1) for idx, (x, y) in enumerate(z_ranking)}
+                    z_ranking = dict([(x, (idx + 1)) for idx, (x, y) in enumerate(z_ranking)])
                     for zipcode in context['zipcodes']:
                         if 'demog' in context['zipcodes'][zipcode]:
                             context['zipcodes'][zipcode]['demog'] = z_ranking[zipcode]
+                if not ranking and variable >= 37:
+                    for zipcode in context['zipcodes']:
+                        if 'demog' in context['zipcodes'][zipcode]:
+                            context['zipcodes'][zipcode]['demog'] = round(context['zipcodes'][zipcode]['demog'])
                         #print context['zipcodes'][zipcode]['demog']
             
 
