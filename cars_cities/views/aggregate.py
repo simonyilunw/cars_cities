@@ -25,8 +25,8 @@ class AggregateStats(View):
         green_total = pickle_load(join(settings.STATS_DIR, 'green_total.p'))
         green_trans = pickle_load(join(settings.STATS_DIR, 'green_trans.p'))
 
-        badList = [115, 117, 121, 122, 128, 129, 132, 135, 144, 160, 167, 173, 183, 192, 195, 197, 203, 212, 226, 229, 234, 258, 266, 276, 278]
-
+        # badList = [115, 117, 121, 122, 128, 129, 132, 135, 144, 160, 167, 173, 183, 192, 195, 197, 203, 212, 226, 229, 234, 258, 266, 276, 278]
+        badList = []
 
 
         if field == 'actual' or field == 'predicted':
@@ -257,7 +257,7 @@ class AggregateStats(View):
         state_all = {}
         for sr in shape.shapeRecords():
 
-            print sr.record
+            # print sr.record
             #print sr.record
 
             if sr.record[0] in cities_state:

@@ -84,22 +84,43 @@ $(document).ready(function() {
 	[{{ d.shape.points.0.1 }}, {{ d.shape.points.0.0 }}, {{ d.record.1 }}, {{ d.record.4 }}],
 	{% endfor %}
 	].filter(function(e) {return e[2] > 0;});
-	
+	//console.log(getColorbyValue(0))
+	//console.log(getColorbyValue(0.1))
+	//console.log(getColorbyValue(0.2))
 	function valueToSign(a) {
 		if (a == -3) 
-			return '#009900'
+			// return '#000099'
+			// return '#009900'
+			// return getColorbyValue(0.05)
+			return getColorbyValue(0.0)
 		else if (a == -2)
-			return '#00FF00'
+			// return '#0000FF'
+			// return '#00FF00'
+			// return getColorbyValue(0.2)
+			return getColorbyValue(0.1)
 		else if (a == -1)
-			return '#66FF66'
+			// return '#6666FF'
+			// return '#66FF66'
+			// return getColorbyValue(0.35)
+			return getColorbyValue(0.2)
 		else if (a == 0)
+			//return '#EEEEEE'
 			return '#FFFFCC'
 		else if (a == 1)
-			return '#FF6666'
+			return getColorbyValue(0.65)
+			// return getColorbyValue(0.8)
+			// return '#FF6666'
+			// return '#FFB6C1'
 		else if (a == 2)
-			return '#FF0000'
+			return getColorbyValue(0.8)
+			// return getColorbyValue(0.9)
+			// return '#FF0000'
+			// return '#FF69B4'
 		else if (a == 3)
-			return '#990000'
+			return getColorbyValue(0.95)
+			// return getColorbyValue(1)
+			// return '#990000'
+			// return '#FF1493'
 		else
 			return '#000000'
 	}
