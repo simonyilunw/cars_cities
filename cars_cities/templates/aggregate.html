@@ -18,15 +18,15 @@
 
 }
 .legend i {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     float: left;
     margin-right: 8px;
     opacity: 0.7;
 }
 .info {
     padding: 6px 8px;
-    font: 24px/28px Arial, Helvetica, sans-serif;
+    font: 34px/36px Arial, Helvetica, sans-serif;
     background: white;
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -175,7 +175,7 @@ $(document).ready(function() {
 	}
 	
 	// var map = L.map('map').setView([39.7326,-98.9196], 5.3);
-	var map = L.map('map', { zoomControl:false }).setView([38.2326,-96.9196], 5.3);
+	var map = L.map('map', { zoomControl:false , attributionControl:false}).setView([38.2326,-94.9196], 5.3);
 	//L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i87786ca/{z}/{x}/{y}.png', {
 	//    attribution: '',
 	//    maxZoom: 18
