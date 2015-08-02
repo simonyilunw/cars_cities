@@ -244,7 +244,7 @@ $(document).ready(function() {
 
 
     //L.TileLayer.GeoJSON( <String> urlTemplate, <GeoJSONTileLayer options> options?, <GeoJSON options> geojsonOptions? )
-    {% if field == 'state_data' or field == 'state_gt'%}
+    {% if field == 'state_data' or field == 'state_gt' or field == 'rainbow'%}
     data = [
 	{% for state_name, d in state.iteritems %}
     	[{{ d.polygon }}, {{ d.demog }}],
@@ -258,7 +258,7 @@ $(document).ready(function() {
 	];
 	{% endif %}
 	
-	{% if field == 'state_data' or field == 'state_gt'%}
+	{% if field == 'state_data' or field == 'state_gt' or field == 'rainbow'%}
 	var max = data.reduce(function(a, b) {
 		return Math.max(a, b[1]);
 	}, 0);
@@ -300,7 +300,15 @@ $(document).ready(function() {
 			stroke: false
 		}).addTo(map);
 	});
-	{% else %}
+	{% else %}{% if field == 'rainbow'%}
+		$.each(data, function(index, value) {
+		L.polygon(value[0], {
+			fillColor: getColorbyValue(value[1], min, max), 
+			fillOpacity: 0.8,
+			stroke: false
+		}).addTo(map);
+	});
+	{%else %}
 	data2 = [
 	{% for state_name, d in state.iteritems %}
     	[{{ d.polygon }}, {{ d.demog }}],
@@ -325,7 +333,7 @@ $(document).ready(function() {
 	});
 	
 
-	{% endif%}
+	{% endif%}{% endif%}
 	
 	function roundToTwo(num) {    
 	    return +(Math.round(num * 100) / 100);
@@ -333,7 +341,7 @@ $(document).ready(function() {
 	
 
 
-	{% if field == 'state_data' or field == 'state_gt'%}
+	{% if field == 'state_data' or field == 'state_gt' %}
 	var legend = L.control({position: 'bottomright'});
 	legend.onAdd = function (map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
@@ -361,7 +369,34 @@ $(document).ready(function() {
 	    return div;
 	};
 	legend.addTo(map);
+	{% else %}{% if field == 'rainbow'%}
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        grades = [min, min + delta/5, min + 2.0*delta/5, min + 3.0*delta/5, min + 4.0*delta/5, max],
+	        labels = [];
 
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < grades.length; i++) {
+	    	var curr = grades[i];
+	    	var next = grades[i + 1];
+			if (max < 2) {
+	    		curr *= 100;
+	    		curr = roundToTwo(curr) + '%';
+	    		next *= 100;
+	    		next = roundToTwo(next) + '%';
+	    	}
+	    	else {
+	    		curr = Math.round(curr) + '%';
+	    		next = Math.round(next) + '%';
+	    	}
+	    	if (i == grades.length - 1) next = 0;
+	        div.innerHTML += '<i style="background:' + getColorbyValue(grades[i], min, max) + ';"> </i>' + 
+	        curr + (next ? '&ndash;' + next + '<br />' : '+');
+	    }
+	    return div;
+	};
+	legend.addTo(map);
 	{% else %}
 
 	var legend = L.control({position: 'bottomright'});
@@ -392,7 +427,7 @@ $(document).ready(function() {
 	};
 	legend.addTo(map);
 
-	{% endif%}
+	{% endif%}{% endif%}
 
 
 

@@ -71,7 +71,8 @@ class AggregateStats(View):
                     elif field == 'predicted':
                         data['value'] = demog['city_data'][city_id]['preds'][variable]
 
-
+            elif field == "rainbow":
+                pass
             else:
                 data['value'] = data[field]
         
@@ -117,7 +118,131 @@ class AggregateStats(View):
             elif field == "state_gt":
                 data["value"]  = green[state_name]['gt']
                
+            elif field == "rainbow":
+                data["value"] = -1
+                if city_id == 'Mississippi':
+                    data["value"] = 3.660
+                if city_id == 'Oklahoma':
+                    data["value"] = 7.065
 
+                if city_id == 'Wyoming':
+                    data["value"] = 6.296
+                if city_id == 'Minnesota':
+                    data["value"] = 8.570
+
+                if city_id == 'Illinois':
+                    data["value"] = 7.831
+
+                if city_id == 'Arkansas':
+                    data["value"] = 5.503
+
+                if city_id == 'New Mexico':
+                    data["value"] = 7.969
+
+                if city_id == 'Ohio':
+                    data["value"] = 7.579
+
+                if city_id == 'Indiana':
+                    data["value"] = 7.297
+                if city_id == 'Maryland':
+                    data["value"] = 7.303
+                if city_id == 'Louisiana':
+                    data["value"] = 6.887
+
+                if city_id == 'Idaho':
+                    data["value"] = 6.982
+
+                if city_id == 'Arizona':
+                    data["value"] = 7.243
+
+                if city_id == 'Iowa':
+                    data["value"] = 7.580
+
+                if city_id == 'New York':
+                    data["value"] = 7.496
+
+                if city_id == 'Michigan':
+                    data["value"] = 7.486
+
+                if city_id == 'Kansas':
+                    data["value"] = 7.461
+
+                if city_id == 'Utah':
+                    data["value"] = 7.453
+
+                if city_id == 'Virginia':
+                    data["value"] = 6.906
+
+                if city_id == 'Oregon':
+                    data["value"] = 10.631
+                if city_id == 'Connecticut':
+                    data["value"] = 7.625
+                if city_id == 'Montana':
+                    data["value"] = 7.769
+                if city_id == 'California':
+                    data["value"] = 8.958
+                if city_id == 'Massachusetts':
+                    data["value"] = 9.580
+                if city_id == 'West Virginia':
+                    data["value"] = 6.311
+                if city_id == 'South Carolina':
+                    data["value"] = 5.083
+                if city_id == 'New Hampshire':
+                    data["value"] = 10.115
+
+                if city_id == 'Vermont':
+                    data["value"] = 9.693
+
+                if city_id == 'Georgia':
+                    data["value"] = 5.186
+
+
+                if city_id == 'North Dakota':
+                    data["value"] = 6.912
+                if city_id == 'Pennsylvania':
+                    data["value"] = 7.711
+
+                if city_id == 'Florida':
+                    data["value"] = 6.439
+                if city_id == 'Alaska':
+                    data["value"] = 7.840
+
+                if city_id == 'Kentucky':
+                    data["value"] = 7.170
+                if city_id == 'Hawaii':
+                    data["value"] = 6.982
+                if city_id == 'Nebraska':
+                    data["value"] = 7.261
+                if city_id == 'Missouri':
+                    data["value"] = 7.560
+                if city_id == 'Wisconsin':
+                    data["value"] = 9.106
+                if city_id == 'Alabama':
+                    data["value"] = 4.343
+                if city_id == 'Rhode Island':
+                    data["value"] = 8.567
+                if city_id == 'South Dakota':
+                    data["value"] = 8.514
+                if city_id == 'Colorado':
+                    data["value"] = 8.826
+                if city_id == 'New Jersey':
+                    data["value"] = 7.080
+                if city_id == 'Washington':
+                    data["value"] = 9.958
+                if city_id == 'North Carolina':
+                    data["value"] = 6.600
+                if city_id == 'Tennessee':
+                    data["value"] = 5.998
+                if city_id == 'District of Columbia':
+                    data["value"] = 7.927
+                if city_id == 'Texas':
+                    data["value"] = 6.522
+                if city_id == 'Nevada':
+                    data["value"] = 8.247
+                if city_id == 'Delaware':
+                    data["value"] = 7.378
+                if city_id == 'Maine':
+                    data["value"] = 8.191
             else:
                 data["value"] = 0
                 if city_id == 'Mississippi':
@@ -253,7 +378,7 @@ class AggregateStats(View):
         shape = Reader(path.join(settings.LATLNGS_SHP_DIR, 'states'))
         #for sr in shape.shapeRecords():
 
-        #print cities_state
+        # print cities_state
         state_all = {}
         for sr in shape.shapeRecords():
 
